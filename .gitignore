@@ -33,3 +33,7 @@ services/**/vendor/
 # Python venvs used only locally during development/tests
 .venv/
 __pycache__/
+
+# Compiled Go binaries (produced by `go build`/`go test`)
+services/auth-service/auth-service
+services/evaluation-service/evaluation-service
