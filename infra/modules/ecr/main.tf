@@ -28,7 +28,7 @@ resource "aws_ecr_lifecycle_policy" "this" {
     rules = [
       {
         rulePriority = 1
-        description  = "Mantém apenas as 15 imagens mais recentes"
+        description  = "Mantém apenas as 15 imagens mais recentes "
         selection = {
           tagStatus   = "any"
           countType   = "imageCountMoreThan"
