@@ -6,7 +6,6 @@ crash.log
 crash.*.log
 *.tfvars
 !*.tfvars.example
-.terraform.lock.hcl
 override.tf
 override.tf.json
 *_override.tf
@@ -37,3 +36,9 @@ __pycache__/
 # Compiled Go binaries (produced by `go build`/`go test`)
 services/auth-service/auth-service
 services/evaluation-service/evaluation-service
+
+# Backend config with real bucket name (derived from account id)
+infra/backend.hcl
+infra/modules/argocd/.generated/
+infra/tfplan
+infra/**/.generated/

@@ -1,0 +1,7 @@
+# Copie para backend.hcl (git-ignorado) e ajuste o bucket conforme o output
+# `state_bucket_name` da stack infra/bootstrap.
+#
+# Uso: terraform init -backend-config=backend.hcl
+
+bucket = "togglemaster-tfstate-473556687259"
+region = "us-east-1"

@@ -1,0 +1,12 @@
+# Copie para terraform.tfvars e ajuste conforme necessário.
+# A maioria dos valores já tem defaults sensatos em variables.tf.
+
+aws_region   = "us-east-1"
+project_name = "togglemaster"
+environment  = "prod"
+
+# AWS Academy: nome da IAM Role pré-existente usada pelo EKS/Node Group.
+lab_role_name = "LabRole"
+
+# Ajuste para o seu usuário/repositório de GitOps.
+gitops_repo_url = "https://github.com/Cadu-Dias/tech-challenge-fase-03.git"
