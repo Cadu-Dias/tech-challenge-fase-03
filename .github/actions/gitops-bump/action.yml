@@ -16,7 +16,11 @@ runs:
     - name: Instalar kustomize
       shell: bash
       run: |
-        curl -sfL "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 5.4.3 /usr/local/bin
+        if command -v kustomize >/dev/null 2>&1; then
+          echo "kustomize já disponível: $(kustomize version --short 2>/dev/null || kustomize version)"
+        else
+          curl -sfL "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 5.4.3 /usr/local/bin
+        fi
 
     - name: kustomize edit set image
       shell: bash
