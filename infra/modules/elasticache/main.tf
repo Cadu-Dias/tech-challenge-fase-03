@@ -14,7 +14,7 @@ resource "aws_elasticache_subnet_group" "this" {
 
 resource "aws_security_group" "redis" {
   name        = "${local.name}-redis-sg"
-  description = "Permite acesso Redis (6379) somente dos nós do EKS"
+  description = "Permite acesso Redis (6379) somente dos nos do EKS"
   vpc_id      = var.vpc_id
 
   egress {

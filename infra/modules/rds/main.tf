@@ -31,7 +31,7 @@ resource "aws_security_group" "rds" {
   for_each = var.databases
 
   name        = "${local.name}-rds-${each.key}-sg"
-  description = "Permite acesso PostgreSQL (5432) somente dos nós do EKS ao banco ${each.key}"
+  description = "Permite acesso PostgreSQL (5432) somente dos nos do EKS ao banco ${each.key}"
   vpc_id      = var.vpc_id
 
   egress {

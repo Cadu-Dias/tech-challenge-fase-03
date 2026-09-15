@@ -40,5 +40,5 @@ services/evaluation-service/evaluation-service
 # Backend config with real bucket name (derived from account id)
 infra/backend.hcl
 infra/modules/argocd/.generated/
-infra/tfplan
+infra/tfplan*
 infra/**/.generated/

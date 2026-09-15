@@ -95,7 +95,7 @@ variable "rds_allocated_storage" {
 variable "rds_engine_version" {
   description = "Versão do PostgreSQL nas instâncias RDS."
   type        = string
-  default     = "16.4"
+  default     = "16.10"
 }
 
 variable "rds_databases" {

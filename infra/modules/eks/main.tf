@@ -83,6 +83,9 @@ resource "aws_eks_node_group" "this" {
   node_role_arn   = data.aws_iam_role.lab_role.arn
   subnet_ids      = var.private_subnet_ids
 
+  # AL2 (o AMI type default legado) não é mais suportado para o Kubernetes
+  # 1.30+; AL2023 é o AMI gerenciado exigido pela EKS a partir dessa versão.
+  ami_type       = "AL2023_x86_64_STANDARD"
   instance_types = var.node_instance_types
 
   scaling_config {
