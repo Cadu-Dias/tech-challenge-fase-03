@@ -107,6 +107,7 @@ module "argocd" {
   destination_namespace  = module.secrets.namespace
   cluster_name           = module.eks.cluster_name
   aws_region             = var.aws_region
+  gitops_repo_token      = var.gitops_repo_token
 
   depends_on = [module.eks, module.secrets]
 }

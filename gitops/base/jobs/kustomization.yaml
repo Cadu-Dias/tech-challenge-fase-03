@@ -2,3 +2,17 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - db-init.yaml
+
+# Schemas SQL usados pelos Jobs de db-init, copiados de services/<svc>/db/init.sql
+# (mantidos aqui para respeitar a restrição de segurança do Kustomize, que não
+# permite referenciar arquivos fora da árvore do kustomization).
+configMapGenerator:
+  - name: schema-auth
+    files:
+      - init.sql=sql/auth-init.sql
+  - name: schema-flag
+    files:
+      - init.sql=sql/flag-init.sql
+  - name: schema-targeting
+    files:
+      - init.sql=sql/targeting-init.sql

@@ -37,3 +37,10 @@ variable "cluster_name" {
 variable "aws_region" {
   type = string
 }
+
+variable "gitops_repo_token" {
+  description = "Token de acesso (GitHub PAT com escopo 'repo') usado pelo ArgoCD para clonar o repositório GitOps privado. Vazio = repositório assumido público."
+  type        = string
+  default     = ""
+  sensitive   = true
+}

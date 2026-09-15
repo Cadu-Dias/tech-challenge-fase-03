@@ -19,6 +19,30 @@ resource "kubernetes_namespace" "argocd" {
   }
 }
 
+# --- Credencial de acesso ao repositório GitOps (privado). O ArgoCD exige
+# um Secret com o label `argocd.argoproj.io/secret-type: repository` para
+# autenticar via HTTPS+token em repositórios privados. O token nunca é
+# commitado: é passado como variável sensível (TF_VAR_gitops_repo_token ou
+# -var na hora do apply). ---
+resource "kubernetes_secret" "repo_credentials" {
+  count = var.gitops_repo_token != "" ? 1 : 0
+
+  metadata {
+    name      = "repo-toggle-master-gitops"
+    namespace = kubernetes_namespace.argocd.metadata[0].name
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repository"
+    }
+  }
+
+  data = {
+    type     = "git"
+    url      = var.gitops_repo_url
+    username = "x-access-token"
+    password = var.gitops_repo_token
+  }
+}
+
 resource "helm_release" "argocd" {
   name       = "argocd"
   repository = "https://argoproj.github.io/argo-helm"

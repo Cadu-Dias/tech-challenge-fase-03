@@ -167,6 +167,13 @@ variable "gitops_target_revision" {
   default = "main"
 }
 
+variable "gitops_repo_token" {
+  description = "Token de acesso (GitHub PAT, escopo 'repo') para o ArgoCD clonar o repositório GitOps privado. Definir via TF_VAR_gitops_repo_token ou -var, nunca em arquivo versionado."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
 # --- ingress-nginx ---
 
 variable "ingress_nginx_chart_version" {

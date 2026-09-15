@@ -5,10 +5,10 @@ metadata:
   namespace: toggle
 data:
   PORT: "8004"
-  # REDIS_URL, AWS_SQS_URL são parametrizados por patch no overlay
-  # gitops/overlays/prod (valores reais vêm dos outputs do Terraform:
-  # module.elasticache.endpoint / module.sqs.queue_url).
-  REDIS_URL: "redis://CHANGE_ME:6379"
+  # Endpoint do ElastiCache Redis criado por infra/modules/elasticache
+  # (output "redis_endpoint" do terraform apply). Atualizar aqui se o
+  # cluster for recriado (o endpoint muda).
+  REDIS_URL: "redis://togglemaster-prod-redis.5pwtyq.0001.use1.cache.amazonaws.com:6379"
   FLAG_SERVICE_URL: "http://flag-service:8002"
   TARGETING_SERVICE_URL: "http://targeting-service:8003"
   AWS_REGION: "us-east-1"
