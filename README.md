@@ -228,3 +228,11 @@ cd services/flag-service && pip install -r requirements.txt -r requirements-dev.
 | Qualidade | Nenhum teste/lint | Testes unitários + lint bloqueante no CI |
 | Segurança | Nenhuma verificação | Trivy (SCA+imagem), gosec, bandit, tfsec bloqueantes |
 | Imagens | Push manual (`docker push`) | CI builda, escaneia e publica no ECR |
+
+---
+
+## 🎬 Roteiro do vídeo de apresentação
+
+Ver [`docs/ROTEIRO-VIDEO.md`](docs/ROTEIRO-VIDEO.md) para o roteiro completo
+(até 20 minutos) usado na gravação da demonstração.
+
