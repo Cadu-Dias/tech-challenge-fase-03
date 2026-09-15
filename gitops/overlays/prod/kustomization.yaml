@@ -25,7 +25,8 @@ images:
   newName: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/auth-service
   newTag: v1.0.0-fba044f
 - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/evaluation-service
-  newTag: latest
+  newName: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/evaluation-service
+  newTag: v1.0.0-fba044f
 - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/flag-service
   newName: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/flag-service
   newTag: v1.0.0-66fd560
