@@ -111,9 +111,7 @@ jobs:
           TAG: ${{ steps.vars.outputs.tag }}
         run: |
           docker tag ${{ env.SERVICE }}:ci "$REGISTRY/${{ env.ECR_REPOSITORY }}:$TAG"
-          docker tag ${{ env.SERVICE }}:ci "$REGISTRY/${{ env.ECR_REPOSITORY }}:latest"
           docker push "$REGISTRY/${{ env.ECR_REPOSITORY }}:$TAG"
-          docker push "$REGISTRY/${{ env.ECR_REPOSITORY }}:latest"
           echo "image=$REGISTRY/${{ env.ECR_REPOSITORY }}" >> "$GITHUB_OUTPUT"
 
   gitops-bump:
