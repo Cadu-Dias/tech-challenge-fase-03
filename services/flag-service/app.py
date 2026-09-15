@@ -179,7 +179,11 @@ def update_flag(name):
 
     values.append(name)  # Adiciona o 'name' para a cláusula WHERE
 
-    query = f"UPDATE flags SET {', '.join(fields)} WHERE name = %s RETURNING *"
+    # Suprime B608 (bandit): 'fields' contem apenas fragmentos fixos de uma
+    # whitelist ('description = %s', 'is_enabled = %s'); os valores reais do
+    # usuario vao apenas em 'values', passados de forma parametrizada ao
+    # cur.execute — nao ha concatenacao de input externo na query.
+    query = f"UPDATE flags SET {', '.join(fields)} WHERE name = %s RETURNING *"  # nosec B608
 
     conn = None
     cur = None
@@ -232,4 +236,4 @@ def delete_flag(name):
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 8002))
-    app.run(host='0.0.0.0', port=port, debug=False)  # nosec B104 - bind necessario dentro do container
+    app.run(host='0.0.0.0', port=port, debug=False)  # nosec B104

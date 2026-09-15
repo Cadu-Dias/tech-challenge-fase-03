@@ -155,7 +155,11 @@ def update_rule(flag_name):
 
     values.append(flag_name)  # Adiciona o 'flag_name' para a cláusula WHERE
 
-    query = f"UPDATE targeting_rules SET {', '.join(fields)} WHERE flag_name = %s RETURNING *"
+    # Suprime B608 (bandit): 'fields' contem apenas fragmentos fixos de uma
+    # whitelist ('rules = %s', 'is_enabled = %s'); os valores reais do
+    # usuario vao apenas em 'values', passados de forma parametrizada ao
+    # cur.execute — nao ha concatenacao de input externo na query.
+    query = f"UPDATE targeting_rules SET {', '.join(fields)} WHERE flag_name = %s RETURNING *"  # nosec B608
 
     conn = None
     cur = None
@@ -208,4 +212,4 @@ def delete_rule(flag_name):
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 8003))
-    app.run(host='0.0.0.0', port=port, debug=False)  # nosec B104 - bind necessario dentro do container
+    app.run(host='0.0.0.0', port=port, debug=False)  # nosec B104
