@@ -110,3 +110,11 @@ module "argocd" {
 
   depends_on = [module.eks, module.secrets]
 }
+
+module "ingress_nginx" {
+  source = "./modules/ingress_nginx"
+
+  chart_version = var.ingress_nginx_chart_version
+
+  depends_on = [module.eks]
+}

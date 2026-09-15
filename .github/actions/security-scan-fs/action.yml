@@ -1,0 +1,17 @@
+name: "Trivy filesystem scan"
+description: "Escaneia o filesystem do serviço (dependências) com Trivy e bloqueia em achados CRITICAL."
+inputs:
+  scan-path:
+    description: "Diretório a escanear."
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Trivy fs scan (CRITICAL bloqueia o pipeline)
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        scan-type: "fs"
+        scan-ref: ${{ inputs.scan-path }}
+        severity: "CRITICAL"
+        exit-code: "1"
+        ignore-unfixed: true

@@ -1,0 +1,38 @@
+name: "GitOps bump"
+description: "Atualiza a tag da imagem do serviço em gitops/overlays/prod via kustomize e commita com [skip ci]."
+inputs:
+  service:
+    description: "Nome do serviço (ex: auth-service)."
+    required: true
+  image:
+    description: "URI completa da imagem (registry/repo)."
+    required: true
+  tag:
+    description: "Tag recém publicada no ECR."
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Instalar kustomize
+      shell: bash
+      run: |
+        curl -sfL "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash -s -- 5.4.3 /usr/local/bin
+
+    - name: kustomize edit set image
+      shell: bash
+      working-directory: gitops/overlays/prod
+      run: |
+        kustomize edit set image "${{ inputs.image }}=${{ inputs.image }}:${{ inputs.tag }}"
+
+    - name: Commit e push do bump
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add gitops/overlays/prod/kustomization.yaml
+        if git diff --cached --quiet; then
+          echo "Nenhuma mudança de imagem a commitar."
+          exit 0
+        fi
+        git commit -m "chore(gitops): bump ${{ inputs.service }} to ${{ inputs.tag }} [skip ci]"
+        git push

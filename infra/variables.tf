@@ -166,3 +166,11 @@ variable "gitops_target_revision" {
   type    = string
   default = "main"
 }
+
+# --- ingress-nginx ---
+
+variable "ingress_nginx_chart_version" {
+  description = "Versão do chart ingress-nginx/ingress-nginx instalado via Helm."
+  type        = string
+  default     = "4.11.3"
+}

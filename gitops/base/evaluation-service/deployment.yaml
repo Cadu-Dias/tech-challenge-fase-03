@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evaluation-service
+  namespace: toggle
+  labels: { app: evaluation-service }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: evaluation-service }
+  template:
+    metadata:
+      labels: { app: evaluation-service }
+    spec:
+      containers:
+        - name: evaluation-service
+          image: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/evaluation-service:latest
+          ports:
+            - containerPort: 8004
+          envFrom:
+            - configMapRef: { name: evaluation-config }
+            - secretRef: { name: evaluation-secret }
+          resources:
+            requests: { cpu: "100m", memory: "64Mi" }
+            limits: { cpu: "500m", memory: "128Mi" }
+          readinessProbe:
+            httpGet: { path: /health, port: 8004 }
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /health, port: 8004 }
+            initialDelaySeconds: 10
+            periodSeconds: 15

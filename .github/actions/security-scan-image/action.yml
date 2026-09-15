@@ -1,0 +1,17 @@
+name: "Trivy image scan"
+description: "Escaneia a imagem Docker recém-buildada com Trivy e bloqueia em achados CRITICAL antes do push para o ECR."
+inputs:
+  image-ref:
+    description: "Referência da imagem local a escanear (ex: auth-service:ci)."
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Trivy image scan (CRITICAL bloqueia o push)
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        scan-type: "image"
+        image-ref: ${{ inputs.image-ref }}
+        severity: "CRITICAL"
+        exit-code: "1"
+        ignore-unfixed: true

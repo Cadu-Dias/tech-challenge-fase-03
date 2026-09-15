@@ -1,0 +1,58 @@
+# Dois Ingress porque o rewrite difere por serviço:
+# - auth e analytics: rotas internas SEM prefixo (/validate, /admin/keys, /health)
+#   => precisam remover o prefixo (rewrite /$2).
+# - flag, targeting, evaluation: rotas internas COM prefixo (/flags, /rules, /evaluate)
+#   => mantêm o path original (sem rewrite).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: toggle-ingress-rewrite
+  namespace: toggle
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /auth(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-service
+                port: { number: 8001 }
+          - path: /analytics(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: analytics-service
+                port: { number: 8005 }
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: toggle-ingress-passthrough
+  namespace: toggle
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /flags
+            pathType: Prefix
+            backend:
+              service:
+                name: flag-service
+                port: { number: 8002 }
+          - path: /rules
+            pathType: Prefix
+            backend:
+              service:
+                name: targeting-service
+                port: { number: 8003 }
+          - path: /evaluate
+            pathType: Prefix
+            backend:
+              service:
+                name: evaluation-service
+                port: { number: 8004 }

@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: toggle
+
+resources:
+  - ../../base/namespace
+  - ../../base/auth-service
+  - ../../base/flag-service
+  - ../../base/targeting-service
+  - ../../base/evaluation-service
+  - ../../base/analytics-service
+  - ../../base/ingress
+  - ../../base/jobs
+
+# Schemas SQL usados pelos Jobs de db-init (base/jobs/db-init.yaml monta os
+# ConfigMaps schema-<svc> gerados aqui a partir do código-fonte de cada
+# serviço, mantendo o SQL como fonte única de verdade em services/<svc>/db).
+configMapGenerator:
+  - name: schema-auth
+    files:
+      - init.sql=../../../services/auth-service/db/init.sql
+  - name: schema-flag
+    files:
+      - init.sql=../../../services/flag-service/db/init.sql
+  - name: schema-targeting
+    files:
+      - init.sql=../../../services/targeting-service/db/init.sql
+
+# Tags de imagem atualizadas automaticamente pelo job "gitops-bump" do CI
+# (kustomize edit set image) a cada push na main de cada serviço.
+images:
+  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/auth-service
+    newTag: latest
+  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/flag-service
+    newTag: latest
+  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/targeting-service
+    newTag: latest
+  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/evaluation-service
+    newTag: latest
+  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/analytics-service
+    newTag: latest

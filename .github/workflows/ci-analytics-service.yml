@@ -1,0 +1,130 @@
+name: CI - analytics-service
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "services/analytics-service/**"
+      - ".github/workflows/ci-analytics-service.yml"
+      - ".github/actions/**"
+  push:
+    branches: [main]
+    paths:
+      - "services/analytics-service/**"
+      - ".github/workflows/ci-analytics-service.yml"
+
+env:
+  SERVICE: analytics-service
+  WORKDIR: services/analytics-service
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: toggle/analytics-service
+
+permissions:
+  contents: write
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar dependências
+        working-directory: ${{ env.WORKDIR }}
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: pytest
+        working-directory: ${{ env.WORKDIR }}
+        run: pytest --cov=. -q
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Instalar flake8
+        working-directory: ${{ env.WORKDIR }}
+        run: pip install -r requirements-dev.txt
+      - name: flake8
+        working-directory: ${{ env.WORKDIR }}
+        run: flake8 .
+
+  security:
+    name: DevSecOps (SCA + SAST)
+    runs-on: ubuntu-latest
+    needs: [build-test, lint]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy fs scan (dependências)
+        uses: ./.github/actions/security-scan-fs
+        with:
+          scan-path: ${{ env.WORKDIR }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: bandit (SAST)
+        run: |
+          pip install bandit
+          bandit -r ${{ env.WORKDIR }} -ll
+
+  docker:
+    name: Build, scan & push image
+    runs-on: ubuntu-latest
+    needs: security
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    outputs:
+      image: ${{ steps.push.outputs.image }}
+      tag: ${{ steps.vars.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Definir tag da imagem
+        id: vars
+        run: |
+          SHA7=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          echo "tag=v1.0.0-${SHA7}" >> "$GITHUB_OUTPUT"
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Login no ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build da imagem
+        run: |
+          docker build -t ${{ env.SERVICE }}:ci ${{ env.WORKDIR }}
+      - name: Trivy image scan
+        uses: ./.github/actions/security-scan-image
+        with:
+          image-ref: ${{ env.SERVICE }}:ci
+      - name: Tag & push para o ECR
+        id: push
+        env:
+          REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          TAG: ${{ steps.vars.outputs.tag }}
+        run: |
+          docker tag ${{ env.SERVICE }}:ci "$REGISTRY/${{ env.ECR_REPOSITORY }}:$TAG"
+          docker tag ${{ env.SERVICE }}:ci "$REGISTRY/${{ env.ECR_REPOSITORY }}:latest"
+          docker push "$REGISTRY/${{ env.ECR_REPOSITORY }}:$TAG"
+          docker push "$REGISTRY/${{ env.ECR_REPOSITORY }}:latest"
+          echo "image=$REGISTRY/${{ env.ECR_REPOSITORY }}" >> "$GITHUB_OUTPUT"
+
+  gitops-bump:
+    name: Atualizar tag no GitOps
+    runs-on: ubuntu-latest
+    needs: docker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/gitops-bump
+        with:
+          service: ${{ env.SERVICE }}
+          image: ${{ needs.docker.outputs.image }}
+          tag: ${{ needs.docker.outputs.tag }}

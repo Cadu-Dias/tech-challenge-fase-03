@@ -1,0 +1,85 @@
+# Jobs que aplicam os schemas (db/init.sql) nas instâncias RDS privadas.
+# Cada Job usa a imagem postgres:16-alpine e o psql, lendo a connection
+# string do Secret do respectivo serviço (materializado pelo módulo
+# Terraform infra/modules/secrets) e o SQL de um ConfigMap gerado pelo
+# configMapGenerator do overlay prod a partir de services/<svc>/db/init.sql.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init-auth
+  namespace: toggle
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: psql
+          image: postgres:16-alpine
+          command: ["/bin/sh", "-c", "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f /sql/init.sql"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: { name: auth-secret, key: DATABASE_URL }
+          volumeMounts:
+            - { name: sql, mountPath: /sql }
+      volumes:
+        - name: sql
+          configMap: { name: schema-auth }
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init-flag
+  namespace: toggle
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: psql
+          image: postgres:16-alpine
+          command: ["/bin/sh", "-c", "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f /sql/init.sql"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: { name: flag-secret, key: DATABASE_URL }
+          volumeMounts:
+            - { name: sql, mountPath: /sql }
+      volumes:
+        - name: sql
+          configMap: { name: schema-flag }
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init-targeting
+  namespace: toggle
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: psql
+          image: postgres:16-alpine
+          command: ["/bin/sh", "-c", "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f /sql/init.sql"]
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef: { name: targeting-secret, key: DATABASE_URL }
+          volumeMounts:
+            - { name: sql, mountPath: /sql }
+      volumes:
+        - name: sql
+          configMap: { name: schema-targeting }

@@ -46,8 +46,10 @@ locals {
     }
     evaluation = {
       SERVICE_API_KEY = random_password.service_api_key.result
-      REDIS_ADDR      = "${var.redis_endpoint}:${var.redis_port}"
-      AWS_SQS_URL     = var.sqs_queue_url
+      # o código do evaluation-service espera a URL completa com esquema
+      # (ex: redis://host:6379), não host:porta isolados.
+      REDIS_URL   = "redis://${var.redis_endpoint}:${var.redis_port}"
+      AWS_SQS_URL = var.sqs_queue_url
     }
     analytics = {
       AWS_SQS_URL        = var.sqs_queue_url

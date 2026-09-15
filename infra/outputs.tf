@@ -39,3 +39,8 @@ output "argocd_port_forward_command" {
   description = "Comando para acessar a UI do ArgoCD localmente."
   value       = var.install_argocd ? "kubectl port-forward svc/argocd-server -n ${var.argocd_namespace} 8080:443" : null
 }
+
+output "ingress_nginx_lb_hostname_command" {
+  description = "Comando para obter o hostname do NLB criado pelo ingress-nginx (fica disponível alguns minutos após o apply)."
+  value       = "kubectl get svc -n ${module.ingress_nginx.namespace} ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'"
+}
