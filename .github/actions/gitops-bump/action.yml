@@ -39,4 +39,18 @@ runs:
           exit 0
         fi
         git commit -m "chore(gitops): bump ${{ inputs.service }} to ${{ inputs.tag }} [skip ci]"
-        git push
+
+        # Jobs de outros serviços podem commitar/pushar em paralelo no mesmo
+        # kustomization.yaml; usa rebase + retry para evitar 'rejected (fetch first)'.
+        for attempt in 1 2 3 4 5; do
+          if git push; then
+            exit 0
+          fi
+          echo "Push rejeitado (tentativa $attempt), rebaseando sobre origin/main..."
+          git fetch origin main
+          git rebase origin/main
+          sleep $((RANDOM % 5 + 1))
+        done
+
+        echo "::error::Falha ao dar push apos varias tentativas."
+        exit 1
