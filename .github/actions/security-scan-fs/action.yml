@@ -8,10 +8,11 @@ runs:
   using: "composite"
   steps:
     - name: Trivy fs scan (CRITICAL bloqueia o pipeline)
-      uses: aquasecurity/trivy-action@v0.33.1
+      uses: aquasecurity/trivy-action@v0.36.0
       with:
         scan-type: "fs"
         scan-ref: ${{ inputs.scan-path }}
         severity: "CRITICAL"
         exit-code: "1"
         ignore-unfixed: true
+        version: "v0.70.0"
