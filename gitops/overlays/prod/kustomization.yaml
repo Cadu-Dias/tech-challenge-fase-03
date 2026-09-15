@@ -3,14 +3,14 @@ kind: Kustomization
 namespace: toggle
 
 resources:
-  - ../../base/namespace
-  - ../../base/auth-service
-  - ../../base/flag-service
-  - ../../base/targeting-service
-  - ../../base/evaluation-service
-  - ../../base/analytics-service
-  - ../../base/ingress
-  - ../../base/jobs
+- ../../base/namespace
+- ../../base/auth-service
+- ../../base/flag-service
+- ../../base/targeting-service
+- ../../base/evaluation-service
+- ../../base/analytics-service
+- ../../base/ingress
+- ../../base/jobs
 
 # Schemas SQL dos Jobs de db-init são gerados em ../../base/jobs (ver kustomization.yaml lá)
 # a partir dos arquivos copiados de services/<svc>/db/init.sql.
@@ -18,13 +18,14 @@ resources:
 # Tags de imagem atualizadas automaticamente pelo job "gitops-bump" do CI
 # (kustomize edit set image) a cada push na main de cada serviço.
 images:
-  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/auth-service
-    newTag: latest
-  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/flag-service
-    newTag: latest
-  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/targeting-service
-    newTag: latest
-  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/evaluation-service
-    newTag: latest
-  - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/analytics-service
-    newTag: latest
+- name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/analytics-service
+  newName: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/analytics-service
+  newTag: v1.0.0-abae7b3
+- name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/auth-service
+  newTag: latest
+- name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/evaluation-service
+  newTag: latest
+- name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/flag-service
+  newTag: latest
+- name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/targeting-service
+  newTag: latest
