@@ -35,14 +35,14 @@ resource "kubernetes_namespace" "toggle" {
 locals {
   secrets_manager_payload = {
     auth = {
-      DATABASE_URL = "postgres://${var.rds_master_username}:${var.rds_passwords["auth"]}@${var.rds_endpoints["auth"]}/${var.rds_database_names["auth"]}?sslmode=require"
+      DATABASE_URL = "postgres://${var.rds_master_username}:${urlencode(var.rds_passwords["auth"])}@${var.rds_endpoints["auth"]}/${var.rds_database_names["auth"]}?sslmode=require"
       MASTER_KEY   = random_password.auth_master_key.result
     }
     flag = {
-      DATABASE_URL = "postgres://${var.rds_master_username}:${var.rds_passwords["flag"]}@${var.rds_endpoints["flag"]}/${var.rds_database_names["flag"]}?sslmode=require"
+      DATABASE_URL = "postgres://${var.rds_master_username}:${urlencode(var.rds_passwords["flag"])}@${var.rds_endpoints["flag"]}/${var.rds_database_names["flag"]}?sslmode=require"
     }
     targeting = {
-      DATABASE_URL = "postgres://${var.rds_master_username}:${var.rds_passwords["targeting"]}@${var.rds_endpoints["targeting"]}/${var.rds_database_names["targeting"]}?sslmode=require"
+      DATABASE_URL = "postgres://${var.rds_master_username}:${urlencode(var.rds_passwords["targeting"])}@${var.rds_endpoints["targeting"]}/${var.rds_database_names["targeting"]}?sslmode=require"
     }
     evaluation = {
       SERVICE_API_KEY = random_password.service_api_key.result
