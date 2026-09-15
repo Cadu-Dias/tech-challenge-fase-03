@@ -91,7 +91,8 @@ resource "null_resource" "apply_argocd_app" {
   }
 
   provisioner "local-exec" {
-    command = <<-EOT
+    interpreter = ["/bin/bash", "-c"]
+    command     = <<-EOT
       set -euo pipefail
       KCFG="${path.module}/.generated/kubeconfig-${var.cluster_name}"
       aws eks update-kubeconfig --region "${var.aws_region}" --name "${var.cluster_name}" --kubeconfig "$KCFG"
