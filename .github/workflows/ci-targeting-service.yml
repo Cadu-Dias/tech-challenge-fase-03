@@ -12,6 +12,7 @@ on:
     paths:
       - "services/targeting-service/**"
       - ".github/workflows/ci-targeting-service.yml"
+      - ".github/actions/**"
 
 env:
   SERVICE: targeting-service

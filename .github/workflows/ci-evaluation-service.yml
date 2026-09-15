@@ -12,6 +12,7 @@ on:
     paths:
       - "services/evaluation-service/**"
       - ".github/workflows/ci-evaluation-service.yml"
+      - ".github/actions/**"
 
 env:
   SERVICE: evaluation-service

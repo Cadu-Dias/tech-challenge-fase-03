@@ -12,6 +12,7 @@ on:
     paths:
       - "services/analytics-service/**"
       - ".github/workflows/ci-analytics-service.yml"
+      - ".github/actions/**"
 
 env:
   SERVICE: analytics-service

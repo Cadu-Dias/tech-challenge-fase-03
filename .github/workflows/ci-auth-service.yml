@@ -12,6 +12,7 @@ on:
     paths:
       - "services/auth-service/**"
       - ".github/workflows/ci-auth-service.yml"
+      - ".github/actions/**"
 
 env:
   SERVICE: auth-service

@@ -12,6 +12,7 @@ on:
     paths:
       - "services/flag-service/**"
       - ".github/workflows/ci-flag-service.yml"
+      - ".github/actions/**"
 
 env:
   SERVICE: flag-service
