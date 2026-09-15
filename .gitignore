@@ -28,3 +28,8 @@ services/**/vendor/
 
 # OS
 .DS_Store
+.venv/
+
+# Python venvs used only locally during development/tests
+.venv/
+__pycache__/
