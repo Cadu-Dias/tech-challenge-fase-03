@@ -29,7 +29,7 @@ images:
   newTag: v1.0.0-fba044f
 - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/flag-service
   newName: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/flag-service
-  newTag: v1.0.0-66fd560
+  newTag: v1.0.0-57e663e
 - name: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/targeting-service
   newName: 473556687259.dkr.ecr.us-east-1.amazonaws.com/toggle/targeting-service
   newTag: v1.0.0-66fd560
